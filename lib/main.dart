@@ -1,6 +1,7 @@
 // import 'dart:math';
 import 'package:flutter/material.dart';
 //TODO: Step 2 - Import the rFlutter_Alert package here.
+import 'package:rflutter_alert/rflutter_alert.dart';
 import 'quiz_brain.dart';
 
 // QuizBrain object
@@ -43,32 +44,65 @@ class _QuizPageState extends State<QuizPage> {
 
   void checkAnswer(bool userChoice) {
     bool correctAnswer = quizBrain.getQuestionAnswer();
+    //HINT! Step 4 Part B is in the quiz_brain.dart
+    bool end = quizBrain.isFinished();
 
-    setState(() {
-      //TODO: Step 4 - Use IF/ELSE to check if we've reached the end of the quiz. If true, execute Part A, B, C, D.
-      //TODO: Step 4 Part A - show an alert using rFlutter_alert (remember to read the docs for the package!)
-      //HINT! Step 4 Part B is in the quiz_brain.dart
-      //TODO: Step 4 Part C - reset the questionNumber,
-      //TODO: Step 4 Part D - empty out the scoreKeeper.
+    setState(
+      () {
+        //TODO: Step 4 - Use IF/ELSE to check if we've reached the end of the quiz. If true, execute Part A, B, C, D.
+        if (end == true) {
+          // TODO: Step 4 Part A - show an alert using rFlutter_alert (remember to read the docs for the package!)
+          Alert(
+            context: context,
+            type: AlertType.none,
+            title: "Quiz Finished",
+            desc: "You've reached the end of the quiz.",
+            style: AlertStyle(
+              backgroundColor: Colors.grey.shade900,
+              titleStyle: const TextStyle(color: Colors.white),
+              descStyle: const TextStyle(color: Colors.white),
+            ),
+            buttons: [
+              DialogButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                color: const Color.fromARGB(255, 21, 51, 102),
+                child: const Text(
+                  "Restart",
+                  style: TextStyle(color: Colors.white, fontSize: 20),
+                ),
+              )
+            ],
+          ).show();
+          //TODO: Step 4 Part C - reset the questionNumber,
+          quizBrain.reset();
+          //TODO: Step 4 Part D - empty out the scoreKeeper.
+          scoreKeeper.clear();
+        }
 
-      //TODO: Step 5 - If we've not reached the end, ELSE do the answer checking steps below 👇too
-      if (correctAnswer == userChoice) {
-        scoreKeeper.add(
-          const Icon(
-            Icons.check,
-            color: Colors.green,
-          ),
-        );
-      } else {
-        scoreKeeper.add(
-          const Icon(
-            Icons.close,
-            color: Colors.red,
-          ),
-        );
-      }
-      quizBrain.nextQuestion();
-    });
+        //TODO: Step 5 - If we've not reached the end, ELSE do the answer checking steps below 👇too
+        else {
+          if (correctAnswer == userChoice) {
+            scoreKeeper.add(
+              const Icon(
+                Icons.check,
+                color: Colors.green,
+              ),
+            );
+          } else {
+            scoreKeeper.add(
+              const Icon(
+                Icons.close,
+                color: Colors.red,
+              ),
+            );
+          }
+          quizBrain.nextQuestion();
+          print(quizBrain.isFinished());
+        }
+      },
+    );
   }
 
   @override
